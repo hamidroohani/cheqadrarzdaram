@@ -12,6 +12,8 @@ $trans = include "folder/name.php";
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
 <div class="text-center my-header">
@@ -41,14 +43,15 @@ $trans = include "folder/name.php";
             <input type="text" id="myID" placeholder="شناسه یونیک خودت رو وارد کن" class="form-control">
         </div>
         <div class="col-md-6"></div>
-        <div class="col-md-3">
+        <div class="col-md-3 flex-row d-flex align-items-end">
+            <label for="">دلار</label>
             <input type="number" value="26000" id="dollar" placeholder="قیمت دلار" class="form-control ltr">
         </div>
     </div>
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>نام</th>
+            <th class="text-right">نام</th>
             <th>مقدار</th>
             <th>مقدار به دلار</th>
             <th>مقدار به تومان</th>
@@ -74,6 +77,7 @@ $trans = include "folder/name.php";
 </html>
 <script>
     $(function () {
+        $('select').select2();
         let rates = '';
         let trans = <?php echo json_encode($trans); ?>;
         var url      = window.location.href;
@@ -98,7 +102,7 @@ $trans = include "folder/name.php";
         $('#arz').on('change', function () {
             dollar = $('#dollar').val();
             let value = $(this).val();
-            let myText = $("#arz option:selected").text();;
+            let myText = $("#arz option:selected").text();
             $('#chandta').val(changeCheqadr(value));
             chi = value;
             let tbody = $('#mytbody');
@@ -106,7 +110,7 @@ $trans = include "folder/name.php";
             if (tr.length) {
 
             } else {
-                tbody.append("<tr data-name='" + value + "'><td>" + myText + "</td><td class='arz ltr'>" + 0 + "</td><td class='usd ltr'>" + 0 + "</td><td class='toman ltr'>" + 0 + "</td></tr>");
+                tbody.append("<tr data-name='" + value + "'><td class='text-right'>" + myText + "</td><td class='arz ltr'>" + 0 + "</td><td class='usd ltr'>" + 0 + "</td><td class='toman ltr'>" + 0 + "</td></tr>");
             }
             $('#chandta').focus();
         });
@@ -173,7 +177,7 @@ $trans = include "folder/name.php";
             dollar = $('#dollar').val();
             let html = "";
             for (let item in res) {
-                html += "<tr data-name='" + item + "'><td>" + trans[item] + "</td><td class='arz ltr'>" + res[item] + "</td><td class='usd ltr'>" + res[item] * rates[item] + "</td><td class='toman ltr'>" + addCommas(Math.floor(res[item] * rates[item] * dollar)) + "</td></tr>";
+                html += "<tr data-name='" + item + "'><td class='text-right'>" + trans[item] + ' (' + item + ')' + "</td><td class='arz ltr'>" + res[item] + "</td><td class='usd ltr'>" + res[item] * rates[item] + "</td><td class='toman ltr'>" + addCommas(Math.floor(res[item] * rates[item] * dollar)) + "</td></tr>";
             }
             yourArz = res;
             $('tbody').html(html);
@@ -209,6 +213,8 @@ $trans = include "folder/name.php";
             }
             return x1 + x2;
         }
+
+        $('span.select2-selection.select2-selection--single').addClass('form-control');
     })
 </script>
 <?php

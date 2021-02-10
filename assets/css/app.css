@@ -16,3 +16,8 @@
 .ltr {
     direction: ltr;
 }
+
+.select2-results__option--selectable,.select2-selection__rendered {
+    text-align: right;
+    direction: rtl;
+}
