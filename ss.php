@@ -1,14 +1,17 @@
+<?php
+$trans = include "folder/name.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>چقدر ارز دارم</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="text-center my-header">
@@ -75,15 +78,16 @@
         var url      = window.location.href;
         let dollar = $('#dollar').val();
         $.ajax({
-            url: 'http://api.coinlayer.com/api/live?access_key=b718b767e1946440d45eddf7f5edd0ae&symbols=BTC%2CETH%2CBCH%2CNEO%2CBAT%2CLINK%2CDOGE',
+            url: 'http://api.coinlayer.com/api/live?access_key=b718b767e1946440d45eddf7f5edd0ae',
             type: 'GET',
             dataType: 'json',
             success: function (response) {
                 rates = response.rates;
                 let html = "<option value=''>انتخاب کن</option>";
+                let trans = <?php echo json_encode($trans); ?>;
                 for(let item in rates)
                 {
-                    html += "<option value='" + item + "'>" + item + "</option>";
+                    html += "<option value='" + item + "'>" + ((trans[item]) ? (trans[item] + ' (' + item + ')') : item) + "</option>";
                 }
                 $('#arz').html(html);
             }
