@@ -75,6 +75,7 @@ $trans = include "folder/name.php";
 <script>
     $(function () {
         let rates = '';
+        let trans = <?php echo json_encode($trans); ?>;
         var url      = window.location.href;
         let dollar = $('#dollar').val();
         $.ajax({
@@ -84,10 +85,11 @@ $trans = include "folder/name.php";
             success: function (response) {
                 rates = response.rates;
                 let html = "<option value=''>انتخاب کن</option>";
-                let trans = <?php echo json_encode($trans); ?>;
-                for(let item in rates)
+                for(let item in trans)
                 {
-                    html += "<option value='" + item + "'>" + ((trans[item]) ? (trans[item] + ' (' + item + ')') : item) + "</option>";
+                    if (rates[item]){
+                        html += "<option value='" + item + "'>" + trans[item] + ' (' + item + ')' + "</option>";
+                    }
                 }
                 $('#arz').html(html);
             }
@@ -96,6 +98,7 @@ $trans = include "folder/name.php";
         $('#arz').on('change', function () {
             dollar = $('#dollar').val();
             let value = $(this).val();
+            let myText = $("#arz option:selected").text();;
             $('#chandta').val(changeCheqadr(value));
             chi = value;
             let tbody = $('#mytbody');
@@ -103,7 +106,7 @@ $trans = include "folder/name.php";
             if (tr.length) {
 
             } else {
-                tbody.append("<tr data-name='" + value + "'><td>" + value + "</td><td class='arz'>" + 0 + "</td><td class='usd'>" + 0 + "</td><td class='toman'>" + 0 + "</td></tr>");
+                tbody.append("<tr data-name='" + value + "'><td>" + myText + "</td><td class='arz ltr'>" + 0 + "</td><td class='usd ltr'>" + 0 + "</td><td class='toman ltr'>" + 0 + "</td></tr>");
             }
             $('#chandta').focus();
         });
@@ -170,7 +173,7 @@ $trans = include "folder/name.php";
             dollar = $('#dollar').val();
             let html = "";
             for (let item in res) {
-                html += "<tr data-name='" + item + "'><td>" + item + "</td><td class='arz'>" + res[item] + "</td><td class='usd'>" + res[item] * rates[item] + "</td><td class='toman'>" + addCommas(Math.floor(res[item] * rates[item] * dollar)) + "</td></tr>";
+                html += "<tr data-name='" + item + "'><td>" + trans[item] + "</td><td class='arz ltr'>" + res[item] + "</td><td class='usd ltr'>" + res[item] * rates[item] + "</td><td class='toman ltr'>" + addCommas(Math.floor(res[item] * rates[item] * dollar)) + "</td></tr>";
             }
             yourArz = res;
             $('tbody').html(html);
