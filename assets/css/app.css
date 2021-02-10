@@ -1,0 +1,18 @@
+@import "fonts.css";
+@import "helper.css";
+
+
+.text-center.my-header {
+    background: #a29bfe;
+    height: 100px;
+    color: #000;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+
+td, .ltr {
+    direction: ltr;
+}

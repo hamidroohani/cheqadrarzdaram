@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Bootstrap Example</title>
+    <title>چقدر ارز دارم</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div class="text-center my-header">
+    <h1>محاسبه تومانی و دلاری ارز</h1>
+</div>
 <div class="container">
     <div class="form-group">
         <div class="row">
             <div class="col-md-6">
-                <label for="">چی داری</label>
+                <label for="" class="float-right">چی داری</label>
                 <select name="" id="arz" class="form-control">
                     <option value="">Select</option>
                     <option value="BTC">BTC</option>
@@ -23,14 +27,20 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label for="">چندتا داری</label>
-                <input type="text" class="form-control" id="chandta">
+                <label for="" class="float-right">چندتا داری</label>
+                <input type="number" class="form-control ltr" id="chandta">
             </div>
         </div>
     </div>
-    <h2>Striped Rows</h2>
-    <div class="col-md-3 offset-md-9">
-        <input type="text" id="myID" placeholder="شناسه یونیک خودت رو وارد کن" class="form-control">
+    <h2 class="text-center mt-4">لیست</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" id="myID" placeholder="شناسه یونیک خودت رو وارد کن" class="form-control">
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-3">
+            <input type="number" value="26000" id="dollar" placeholder="قیمت دلار" class="form-control ltr">
+        </div>
     </div>
     <table class="table table-striped">
         <thead>
@@ -63,6 +73,7 @@
     $(function () {
         let rates = '';
         var url      = window.location.href;
+        let dollar = $('#dollar').val();
         $.ajax({
             url: 'http://api.coinlayer.com/api/live?access_key=b718b767e1946440d45eddf7f5edd0ae&symbols=BTC%2CETH%2CBCH%2CNEO%2CBAT%2CLINK%2CDOGE',
             type: 'GET',
@@ -79,6 +90,7 @@
         })
         let chi = "";
         $('#arz').on('change', function () {
+            dollar = $('#dollar').val();
             let value = $(this).val();
             $('#chandta').val(changeCheqadr(value));
             chi = value;
@@ -89,16 +101,18 @@
             } else {
                 tbody.append("<tr data-name='" + value + "'><td>" + value + "</td><td class='arz'>" + 0 + "</td><td class='usd'>" + 0 + "</td><td class='toman'>" + 0 + "</td></tr>");
             }
+            $('#chandta').focus();
         });
 
         let yourArz = {};
         $('#chandta').on('keyup paste', function () {
+            dollar = $('#dollar').val();
             let thisval = $(this).val();
             let thistr = $('tr[data-name=' + chi + ']');
             // if (thisval == 0) thistr.remove();
             thistr.children('td.arz').text(thisval);
             thistr.children('td.usd').text(thisval * rates[chi]);
-            thistr.children('td.toman').text(addCommas(Math.floor(thisval * rates[chi] * 25000)));
+            thistr.children('td.toman').text(addCommas(Math.floor(thisval * rates[chi] * dollar)));
             yourArz[chi] = thisval;
 
             create_total();
@@ -131,6 +145,7 @@
         });
 
         $('#myID').on('blur',function (){
+            dollar = $('#dollar').val();
             $.ajax({
                 url: 'll.php',
                 type: 'POST',
@@ -148,9 +163,10 @@
         });
 
         function buildTable(res){
+            dollar = $('#dollar').val();
             let html = "";
             for (let item in res) {
-                html += "<tr data-name='" + item + "'><td>" + item + "</td><td class='arz'>" + res[item] + "</td><td class='usd'>" + res[item] * rates[item] + "</td><td class='toman'>" + addCommas(Math.floor(res[item] * rates[item] * 25000)) + "</td></tr>";
+                html += "<tr data-name='" + item + "'><td>" + item + "</td><td class='arz'>" + res[item] + "</td><td class='usd'>" + res[item] * rates[item] + "</td><td class='toman'>" + addCommas(Math.floor(res[item] * rates[item] * dollar)) + "</td></tr>";
             }
             yourArz = res;
             $('tbody').html(html);
@@ -162,7 +178,7 @@
             let totalToman = 0;
             for (let item in yourArz) {
                 totalUsd += yourArz[item] * rates[item];
-                totalToman += yourArz[item] * rates[item] * 25000;
+                totalToman += yourArz[item] * rates[item] * dollar;
             }
             $('#total_usd').text(addCommas(totalUsd));
             $('#total_toman').text(addCommas(Math.floor(totalToman)));
@@ -221,7 +237,7 @@
 //        var_dump($response);
 //        $response = json_decode($response, true);
 //        $target = $response['rates'];
-//        $dollar = 25000;
+//        $dollar = dollar;
 //        $usd_btc = floatval($target['BTC']) * .006999;
 //        $rial_btc = $usd_btc * $dollar;
 //        $usd_eth = floatval($target['ETH']) * .372333;
