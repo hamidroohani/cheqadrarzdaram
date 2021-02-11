@@ -21,3 +21,8 @@
     text-align: right;
     direction: rtl;
 }
+
+.select2-results__option.select2-results__option--selectable{
+    display: flex;
+    justify-content: space-between;
+}

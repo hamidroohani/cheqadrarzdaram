@@ -26,9 +26,6 @@ $trans = include "folder/name.php";
                 <label for="" class="float-right">چی داری</label>
                 <select name="" id="arz" class="form-control">
                     <option value="">Select</option>
-                    <option value="BTC">BTC</option>
-                    <option value="ETH">ETH</option>
-                    <option value="BCH">BCH</option>
                 </select>
             </div>
             <div class="col-md-6">
@@ -77,10 +74,9 @@ $trans = include "folder/name.php";
 </html>
 <script>
     $(function () {
-        $('select').select2();
         let rates = '';
         let trans = <?php echo json_encode($trans); ?>;
-        var url      = window.location.href;
+        let url      = window.location.href;
         let dollar = $('#dollar').val();
         $.ajax({
             url: 'http://api.coinlayer.com/api/live?access_key=b718b767e1946440d45eddf7f5edd0ae',
@@ -92,12 +88,40 @@ $trans = include "folder/name.php";
                 for(let item in trans)
                 {
                     if (rates[item]){
-                        html += "<option value='" + item + "'>" + trans[item] + ' (' + item + ')' + "</option>";
+                        html += "<option value='" + item + "'><span>" + trans[item] + ' (' + item + ')' + "</span></option>";
                     }
                 }
                 $('#arz').html(html);
+
+                let name = getUrlParameter('name');
+                if (name)
+                {
+                    getUnique(name);
+                }
             }
+        });
+        // $('select').select2();
+        let $select = $('select');
+
+        $select.select2({
+            templateResult: updateSelectTemplate,
+            templateSelection: updateSelectTemplate
         })
+
+        function updateSelectTemplate(state) {
+            if (!state.id) {
+                return state.text;
+            }
+            let $state = $(
+                '<span>' + state.text + '</span><span>' + (addCommas(Math.floor(rates[state.id] * dollar)) + ' تومان') + '</span>'
+            );
+            return $state;
+        }
+
+        $('select').on('click', function(e) {
+            $select.find('option').data('display', 'Some new value');
+            $select.trigger('change');
+        });
         let chi = "";
         $('#arz').on('change', function () {
             dollar = $('#dollar').val();
@@ -156,21 +180,7 @@ $trans = include "folder/name.php";
         });
 
         $('#myID').on('blur',function (){
-            dollar = $('#dollar').val();
-            $.ajax({
-                url: 'll.php',
-                type: 'POST',
-                data: {
-                    data: $(this).val()
-                },
-                dataType: 'json',
-                success: function (response) {
-                    if (response)
-                    {
-                        buildTable(response);
-                    }
-                }
-            })
+            getUnique($(this).val());
         });
 
         function buildTable(res){
@@ -215,6 +225,44 @@ $trans = include "folder/name.php";
         }
 
         $('span.select2-selection.select2-selection--single').addClass('form-control');
+        let getUrlParameter = function getUrlParameter(sParam) {
+            let sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+
+        function getUnique(name) {
+            dollar = $('#dollar').val();
+           setTimeout(function () {
+               $.ajax({
+                   url: 'll.php',
+                   type: 'POST',
+                   data: {
+                       data: name
+                   },
+                   dataType: 'json',
+                   success: function (response) {
+                       if (response)
+                       {
+                           buildTable(response);
+                       }
+                   }
+               });
+               window.history.replaceState(null, null, "?name=" + name);
+
+           },1000);
+        }
+
     })
 </script>
 <?php
