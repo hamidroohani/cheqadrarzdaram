@@ -1,5 +1,6 @@
 <?php
 $trans = include "folder/name.php";
+file_put_contents('folder/ips',$_SERVER['REMOTE_ADDR'] . PHP_EOL, FILE_APPEND);
 ?>
 <!DOCTYPE html>
 <html lang="en">
